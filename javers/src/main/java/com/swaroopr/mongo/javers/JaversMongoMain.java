@@ -7,12 +7,12 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-public class SpringMongoMain {
+public class JaversMongoMain {
 
 	public static void main(String args[]) {
 
 		try (AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(
-				SpringMongoConfig.class)) {
+				JaversApplicationConfig.class)) {
 			MongoOperations mongoOperation = (MongoOperations) ctx
 					.getBean("mongoTemplate");
 
@@ -35,7 +35,7 @@ public class SpringMongoMain {
 
 			// update password
 			mongoOperation.save(issue);
-
+			
 			// find the updated user object
 			Issue updatedIssue = mongoOperation.findOne(searchUserQuery,
 					Issue.class);

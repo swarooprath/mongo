@@ -99,6 +99,4 @@ public class Issue implements Auditable<User, String>{
 		return "Issue [id=" + id + ", title=" + title + ", details=" + details
 				+ ", version=" + version + "]";
 	}
-	
-	
 }

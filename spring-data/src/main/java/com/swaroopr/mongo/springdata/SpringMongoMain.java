@@ -35,7 +35,7 @@ public class SpringMongoMain {
 
 			// update password
 			mongoOperation.save(issue);
-
+			
 			// find the updated user object
 			Issue updatedIssue = mongoOperation.findOne(searchUserQuery,
 					Issue.class);
