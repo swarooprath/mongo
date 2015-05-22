@@ -7,13 +7,17 @@ import org.javers.core.JaversBuilder;
 import org.javers.core.metamodel.object.CdoSnapshot;
 import org.javers.repository.api.JaversRepository;
 import org.javers.repository.jql.QueryBuilder;
+import org.javers.repository.mongo.MongoRepository;
 import org.junit.Assert;
+
+import com.mongodb.MongoClient;
 
 public class JaversMongoMain {
 
 	public static void main(String args[]) {
 
-		   JaversRepository javersRepository = null;
+		
+		   JaversRepository javersRepository = new MongoRepository(new MongoClient().getDB("test2"));
 		   Javers javers = JaversBuilder.javers().registerJaversRepository(javersRepository).build();
 
 	        // init your data
