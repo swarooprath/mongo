@@ -2,54 +2,37 @@ package com.swaroopr.mongo.javers;
 
 import java.util.List;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
+import org.javers.core.Javers;
+import org.javers.core.JaversBuilder;
+import org.javers.core.metamodel.object.CdoSnapshot;
+import org.javers.repository.api.JaversRepository;
+import org.javers.repository.jql.QueryBuilder;
+import org.junit.Assert;
 
 public class JaversMongoMain {
 
 	public static void main(String args[]) {
 
-		try (AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(
-				JaversApplicationConfig.class)) {
-			MongoOperations mongoOperation = (MongoOperations) ctx
-					.getBean("mongoTemplate");
+		   JaversRepository javersRepository = null;
+		   Javers javers = JaversBuilder.javers().registerJaversRepository(javersRepository).build();
 
-			Issue issue = new Issue("elementum", "signed up tesla.");
+	        // init your data
+	        Person robert = new Person("bob", "Robert Martin");
+	        // and persist initial commit
+	        javers.commit("user", robert);
 
-			// save
-			mongoOperation.insert(issue);
+	        // do some changes
+	        robert.setName("Robert C.");
+	        // and persist another commit
+	        javers.commit("user", robert);
 
-			// now user object got the created id.
-			System.out.println("1. user : " + issue);
+	        // when:
+	        List<CdoSnapshot> snapshots = javers.findSnapshots(
+	            QueryBuilder.byInstanceId("bob", Person.class).build());
 
-			// query to search user
-			Query searchUserQuery = new Query(Criteria.where("title").is(
-					"elementum"));
-
-			// find the saved user again.
-			Issue savedIssue = mongoOperation
-					.findOne(searchUserQuery, Issue.class);
-			System.out.println("2. find - savedUser : " + savedIssue);
-
-			// update password
-			mongoOperation.save(issue);
-			
-			// find the updated user object
-			Issue updatedIssue = mongoOperation.findOne(searchUserQuery,
-					Issue.class);
-
-			System.out.println("3. updatedUser : " + updatedIssue);
-
-			// delete
-			mongoOperation.remove(searchUserQuery, Issue.class);
-
-			// List, it should be empty now.
-			List<Issue> listIssues = mongoOperation.findAll(Issue.class);
-			System.out.println("4. Number of issues = " + listIssues.size());
-		}
+	        // then:
+	        // there should be two Snapshots with Bob's state
+	       Assert.assertEquals(2, snapshots.size());
 
 	}
-
 }
